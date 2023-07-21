@@ -102,7 +102,6 @@ def custom_series_painter(sender,app_data):
     y0 = app_data[2][0]
     x1 = app_data[1][1]
     y1 = app_data[2][1]
-
     difference_x = x1 - x0
     difference_y = y1 - y0
 
@@ -120,12 +119,7 @@ def custom_series_painter(sender,app_data):
                 [((x * difference_x) + x0),((y * difference_y) + y0)]
                 for x,y in shape.points
             ]
-            dpg.draw_polygon(
-                points=points_offset,
-                color= shape.color[:3],
-                fill=shape.color[:3],
-                thickness=0
-            )
+            dpg.draw_line(points_offset[0],points_offset[1],color= shape.color[:3],thickness=4)
 
         dpg.configure_item(sender, tooltip=False)
         dpg.pop_container_stack()
@@ -157,7 +151,9 @@ def create_Lines():
     create_shape('Street')
     print(stored_shapes['Automac'])
     stored_shapes['Automac'].points = config.data['vehicle_counting']['automac_coordinates']
+    stored_shapes['Automac'].color = [10,255.,10.,1.]
     stored_shapes['Street'].points = config.data['vehicle_counting']['street_coordinates']
+    stored_shapes['Street'].color = [255,10.,10.,1.]
 
 def main():
     frame_rate = 20
@@ -186,7 +182,15 @@ def main():
         with dpg.group(tag="LytCol2_NewShape", horizontal=True):
             # Col 1 : Plot
             with dpg.plot(label="Drag Lines/Points", height=400, width=600, tag='PlotEditor') as plt_obj:
-                dpg.draw_image(texture_tag="texture_tag", pmin=[0, 1], pmax=[1,0],parent='PlotEditor', tag='image')    
+                dpg.draw_image(texture_tag="texture_tag", pmin=[0, 1], pmax=[1,0],parent='PlotEditor', tag='image')
+                dpg.add_plot_axis(axis=dpg.mvXAxis, tag="PlotAxisX")
+                with dpg.plot_axis(axis=dpg.mvYAxis, tag="PlotAxisY"):
+                    dpg.add_custom_series(
+                        x= [0,1],
+                        y= [0.,1],
+                        channel_count=2,
+                        callback=custom_series_painter
+                    )    
 
             # Col 2 : Shape selector
             with dpg.group(tag="LytCol2"):
