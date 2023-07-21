@@ -1,15 +1,26 @@
 import cv2 as cv
 import numpy as np
 
-def read_portada():
-    frame = cv.imread("./sample/portada.png", cv.IMREAD_COLOR)
-    frame = cv.cvtColor(frame, cv.COLOR_BGR2BGRA)
-    print(frame.shape)
-    data = np.flip(frame, 2)
-    data = data.ravel()
-    data = np.asfarray(data, dtype='f')
-    texture_data = np.true_divide(data, 255.0)
-    return texture_data, frame
+class videocapture():
+    def __init__(self):
+        pass
+    def release(self):
+        return self
+
+
+class Portada():
+    def __init__(self):
+        self.frame = cv.imread("./sample/portada.png", cv.IMREAD_COLOR)
+        self.frame = cv.cvtColor(self.frame, cv.COLOR_BGR2BGRA)
+        self.data = np.flip(self.frame, 2)
+        self.data = self.data.ravel()
+        self.data = np.asfarray(self.data, dtype='f')
+        self.texture_data = np.true_divide(self.data, 255.0)
+        self.vid = videocapture()
+        
+    def get_frame(self):
+        return self
+
 
 class Camera():
     def __init__(self, PASSWORD = "gesti0narc0s", USER = "admin"

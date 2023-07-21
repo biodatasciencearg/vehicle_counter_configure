@@ -1,6 +1,6 @@
 from __future__ import annotations
 import dearpygui.dearpygui as dpg
-from src.camera import Camera, read_portada
+from src.camera import Camera, Portada
 from src.configuration import Configuration
 from dataclasses import dataclass, field
 import time 
@@ -131,34 +131,6 @@ def custom_series_painter(sender,app_data):
         dpg.pop_container_stack()
 
 
-def play_cam(frame_rate=20):
-    # instantiate camera
-    cam = Camera()
-    # get frames from camera.
-    int_snap = cam.get_frame()
-    # print configuration
-    int_snap.get_conf()
-
-    prev = 0
-    while dpg.is_dearpygui_running():
-
-        # updating the texture in a while loop the frame rate will be limited to the camera frame rate.
-        # commenting out the "ret, frame = vid.read()" line will show the full speed that operations and updating a texture can run at
-        time_elapsed = time.time() - prev
-        if time_elapsed > 1./frame_rate:
-            prev = time.time()
-            snap = cam.get_frame()
-            texture_data = snap.texture_data
-            dpg.set_value("texture_tag", texture_data)
-            # to compare to the base example in the open cv tutorials uncomment below
-            #cv.imshow('frame', frame)
-            dpg.render_dearpygui_frame()
-
-    cam.vid.release()
-    #cv.destroyAllWindows() # when using upen cv window "imshow" call this also
-    dpg.destroy_context()
-
-
 def read_yaml(sender, app_data, user_data):
     # read filename
     selected_files = app_data['selections']
@@ -166,14 +138,13 @@ def read_yaml(sender, app_data, user_data):
     # obtengo los valores del yaml
     config.read_yaml(filepath)
     print(config.data)
-    play_cam()
-
+    # instantiate camera
+    global cam
+    cam = Camera()
 
 def write_yaml(sender, app_data, user_data):
     # read filename
-    selected_files = app_data['selections']
-    print(app_data)
-    filepath = selected_files[list(selected_files)[0]]
+    filepath = app_data['file_path_name']
     # obtengo los valores del yaml
     config.write_yaml(filepath)
     print(config.data)
@@ -185,22 +156,22 @@ def create_Lines():
     create_shape('Automac')
     create_shape('Street')
     print(stored_shapes['Automac'])
-    stored_shapes['Automac'].points = config.data['restaurant']['vehicle_counting']['automac_coordinates']
-    stored_shapes['Street'].points = config.data['restaurant']['vehicle_counting']['street_coordinates']
+    stored_shapes['Automac'].points = config.data['vehicle_counting']['automac_coordinates']
+    stored_shapes['Street'].points = config.data['vehicle_counting']['street_coordinates']
 
 def main():
     frame_rate = 20
     dpg.create_context()
-    dpg.create_viewport(title='Lines Builder', width=1000, height=800,clear_color=[0.0,0.0,0.0,0.0])
+    dpg.create_viewport(title='Lines Builder', width=1000, height=600,clear_color=[0.0,0.0,0.0,0.0])
+    global cam
+    cam = Portada()
 
-    
-
-    texture_data, int_snap = read_portada()
+    int_snap = cam.get_frame()
 
     with dpg.texture_registry(show=False):
-        dpg.add_raw_texture(int_snap.shape[1]
-                            , int_snap.shape[0]
-                            , texture_data
+        dpg.add_raw_texture(int_snap.frame.shape[1]
+                            , int_snap.frame.shape[0]
+                            , int_snap.texture_data
                             , tag="texture_tag"
                             , format=dpg.mvFormat_Float_rgba)
        
@@ -238,8 +209,15 @@ def main():
     dpg.set_primary_window("AutomacWindow", True)
     dpg.setup_dearpygui()
     dpg.show_viewport()
+    
+    prev = 0
     while dpg.is_dearpygui_running():
+        snap = cam.get_frame()
+        texture_data = snap.texture_data
+        dpg.set_value("texture_tag", texture_data)
         dpg.render_dearpygui_frame()
 
+    cam.vid.release()
+    dpg.destroy_context()
 if __name__ == '__main__':
     main()
