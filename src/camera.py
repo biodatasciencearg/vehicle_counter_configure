@@ -10,7 +10,7 @@ class videocapture():
 
 class Portada():
     def __init__(self):
-        self.frame = cv.imread("./sample/portada.png", cv.IMREAD_COLOR)
+        self.frame = cv.imread("./img/portada.png", cv.IMREAD_COLOR)
         self.frame = cv.cvtColor(self.frame, cv.COLOR_BGR2BGRA)
         self.data = np.flip(self.frame, 2)
         self.data = self.data.ravel()
@@ -29,11 +29,12 @@ class Camera():
         self.USER     =  USER
         self.IP       =  IP
         self.PORT     =  PORT
-        #self.vid = cv.VideoCapture(f"rtsp://{self.USER}:{self.PASSWORD}@{self.IP}:{self.PORT}/cam/realmonitor?channel=1&subtype=1&unicast=true")
-        self.vid = cv.VideoCapture("./sample/captured_video_20230222140050_320x240.mp4")
+        self.vid = cv.VideoCapture(f"rtsp://{self.USER}:{self.PASSWORD}@{self.IP}:{self.PORT}/cam/realmonitor?channel=1&subtype=1&unicast=true")
+        #self.vid = cv.VideoCapture("./sample/captured_video_20230222140050_320x240.mp4")
     
     def get_frame(self):
         self.ret, frame = self.vid.read()
+        frame = cv.resize(frame,(320,240)) 
         self.frame = cv.cvtColor(frame, cv.COLOR_BGR2BGRA)
         self.data = np.flip(self.frame, 2)
         self.data = self.data.ravel()
