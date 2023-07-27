@@ -134,7 +134,10 @@ def read_yaml(sender, app_data, user_data):
     print(config.data)
     # instantiate camera
     global cam
-    cam = Camera()
+    cam = Camera(USER=config.data['camera']['user']
+            , PASSWORD=config.data['camera']['password']
+            , PORT = config.data['camera']['port']
+            , IP = config.data['camera']['ip'])
 
 def write_yaml(sender, app_data, user_data):
     # read filename
