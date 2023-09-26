@@ -1,0 +1,24 @@
+# camera configuration
+camera:
+  ip: 10.111.68.31
+  password: Herm*2014ARGEN
+  port: 554
+  user: admin
+  fps: 20
+# model configuration. Id detected
+class_ids:
+- 0   #person
+- 2   #car
+- 3   #motorcycle
+- 5   #bus
+- 7   #truck
+# restaurant features.
+restaurant:
+  acronimo: MTD
+  country: AR
+# vehicle counting parameters.
+vehicle_counting:
+  automac_coordinates: [[0.41594783492499293, 0.2790697674418604], [0.6205525379655353,
+      1.1102230246251565e-16]]                                                                # correspond to x1,y1 and x2,y2
+  street_coordinates: [[0.9971521723348221, 0.3343023255813953], [0.8253057372342737,
+      0.2441860465116279]]                                           # correspond to x1,y1 and x2,y2
